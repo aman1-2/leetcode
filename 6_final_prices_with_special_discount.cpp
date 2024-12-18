@@ -31,9 +31,11 @@ Constraints:
 
 #include<iostream>
 #include<vector>
+#include<stack>
 using namespace std;
 
-vector<int> finalPrices(vector<int>& prices) {
+//Brute Force Approach
+vector<int> finalPrices(vector<int>& prices) { //T.C - O(n^2).
     //STEP 1: Created a variable n in which storing the count of the Prices vector size and an ans vector because at the end we need to return a vector which has the final price of the items.
     int n = prices.size();
     vector<int> ans(n);
@@ -62,6 +64,32 @@ vector<int> finalPrices(vector<int>& prices) {
 
     //STEP 5: At the end returning the ans vector;
     return ans;
+}
+
+//Optimize Approach
+vector<int> optimize(vector<int>& prices) { //T.C  -O(n)
+    //STEP 1: Created a ans vector that stores the prices data in it an a stack.
+    vector<int> ans = prices;
+    stack<int> st;
+
+    //STEP 2: Since we need to calculate the discount for each element therefore need to traverse the complete prices vector atleast once.
+    for(int i=0; i<prices.size(); i++) {
+        int currPrice = prices[i]; //Extracting the current price value from the vector.
+
+        //STEP 3: If the stack is not empty and current prices is less that the stack's top value this means that we have found a value which is smaller then the values present in the stack. Hence can update the those stack values by subtracting current value from it.    
+        while(!st.empty() && currPrice <= prices[st.top()]) {
+            ans[st.top()] -= currPrice; //Updating the value.
+            st.pop(); //Removing the top value from the stack actually the index position from the stack as for this index we have calculated the final price.
+        } 
+
+        st.push(i); //At the end pushing the current index into the stack to find the smaller value then it in the vector.
+    }
+
+    //STEP 4: At the end returning the answer vector.
+    return ans; 
+
+    //In the stack we are just trying to store the larger elements and once while traversing the vector we see any smaller element then the current stacks top elements we pop
+    // that element from the stack and update it until the current price element of the vector doesn't becomes larger then the current stack top element or the stack doesn't gets empty till that time we update the value.
 }
 
 int main() {
